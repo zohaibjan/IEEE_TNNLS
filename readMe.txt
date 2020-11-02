@@ -7,4 +7,4 @@ How to use You should run the mainprogram.m file
 NOTE: There are multiple versions of the approach if you want to run SVM as a base classifier then use runTraining_SVM in the mainprogram. runTraining uses all classifiers. 
 
 If you are going to use this work please reference:
-Z. Jan and B. Verma, "Multicluster Class-Balanced Ensemble," IEEE Transactions on Neural Networks and Learning Systems, doi: 10.1109/TNNLS.2020.2979839.
+Jan, Z. and Verma, B., 2020. Multicluster Class-Balanced Ensemble. IEEE Transactions on Neural Networks and Learning Systems.
