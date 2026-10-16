@@ -1,4 +1,4 @@
-function program = mainProgram()
+function mainProgram()
 
 % Problem = dataSetNames();                 % Get list of dataset names
 addpath(genpath('P-Data'));
@@ -21,7 +21,7 @@ params.classifiers = {'SVM'};
 
 %% MAIN LOOP
 for i=1:length(Problem)
-    parfor j=1:10
+    for j=1:10
         majVote = [];
         clusterBased = [];
         e_mVote = [];

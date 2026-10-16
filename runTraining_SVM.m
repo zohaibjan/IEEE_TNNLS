@@ -1,5 +1,5 @@
-function results = runTraining(p_name , params, j)
-warning('off','all');
+function results = runTraining_SVM(p_name , params, j)
+
 params.eachClass = j;
 params.p_name = p_name;
 mVote = [];

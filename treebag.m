@@ -9,7 +9,7 @@ Problem={'adult','australian','balance','banknote',...
 parfor i=1:length(Problem)
     accuracy = []
     for runs = 1:10
-        warning('off','all');
+
         p_name = Problem{i};
         %% Create CROSS VALIDATION FOLDS
         numOfFolds = 10;
@@ -52,7 +52,7 @@ parfor i=1:length(Problem)
     acc
     fprintf(fid, '%s,', p_name);
     fprintf(fid, '%s,', "Tree");
-    fprintf(fid, '%f±%f\n',mean(accuracy),std(accuracy));
+    fprintf(fid, '%fÂ±%f\n',mean(accuracy),std(accuracy));
     fclose(fid);
 end
 
