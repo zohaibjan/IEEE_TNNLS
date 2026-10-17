@@ -15,7 +15,12 @@ numOfFolds = params.numOfFolds;
 cvFolds = cvpartition(data(:,end), 'KFold', numOfFolds);
 
 %% ITERATE OVER THE NUMBER OF FOLDS
-parfor f=1:numOfFolds
+% Zero runs the same parfor body locally for a lightweight CI smoke test.
+maxWorkers = Inf;
+if isfield(params,'maxWorkers')
+    maxWorkers = params.maxWorkers;
+end
+parfor (f=1:numOfFolds, maxWorkers)
     classifiers= {};
     classifierCentroids = {};
     classifierIndex = 1;
@@ -47,9 +52,10 @@ parfor f=1:numOfFolds
     allClusters = generateClusters(trainX, trainy, params);
     [balancedClusters, centroids] = balanceClusters(allClusters, [trainX trainy]);
     
-    for c=allClusters
-        X = c{1,1}.train(:, 1:end-1);
-        y = c{1,1}.train(:, end);
+    for allClusterIndex = 1:numel(allClusters)
+        cluster = allClusters{allClusterIndex};
+        X = cluster.train(:,1:end-1);
+        y = cluster.train(:,end);
         all = trainClassifiers(X, y, valX, valy, params);
         if size(all,1) < 1
             continue
