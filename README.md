@@ -40,8 +40,19 @@ The seed is a starting point for recording runs; nested seed resets, parallel wo
 
 ## Review notes and reproducibility limits
 
-The main driver writes one row per repeat and deliberately writes zero in its deviation columns; those zeros are placeholders, not measured uncertainty. The alternate driver aggregates repeated runs. `runTraining_SVM.m` historically z-scores labels with features and leaves test features unscaled; it needs a separate methodological review before use. Cluster centroids are computed in a scaled space while the fusion comparison uses raw features; validate the intended preprocessing against the paper.
+The active path stores raw feature-space centroids and associates one centroid with each successfully trained learner, including multiple learners per cluster. Constant feature columns do not create NaNs during clustering. ANN/CNN outputs preserve their numeric training labels; an all-tied valid selection retains a nonempty pool. The main driver writes one row per repeat; unmeasured deviation columns contain NaN, not a claim of zero uncertainty. The alternate driver aggregates repeats. The separate `runTraining_SVM.m` variant no longer z-scores labels or pre-scales only the training fold: SVM models handle predictor standardization internally. That variant still needs runtime verification.
 
-The cleanup aligns function/file names, restores visible warnings, makes CSV handles close on errors, and tests constant-feature normalisation plus CSV append behaviour. MATLAB experiments and the new utility tests have **not** been executed in the cleanup environment, which has no MATLAB installation. Static parsing is not a reproduction of the paper.
+## Correctness review — October 2026
+
+This pass fixes implementation defects; it does not validate the associated research results. Changes can alter model pools, predictions and measured scores. Re-run the experiments before comparing corrected code with historical CSVs or published results.
+
+- Label conversion uses numeric category names, not categorical indices.
+- Voting rejects empty/nonfinite inputs; a prediction failure is reported rather than counted as a fabricated class-one vote.
+- Neural models store their training labels in `net.userdata.classLabels`. Retrain old models or restore that exact training vocabulary before prediction; inferring it from a validation subset is unsafe.
+- Synthetic checks cover normalization, CSV append behavior and the new prediction/selection boundaries. Additional cluster checks run where applicable.
+
+See [the code review](docs/code-review.md) for repository-specific changes, tests and remaining limitations.
+
+**Validation:** all MATLAB sources were statically parsed/linted with MISS_HIT. MATLAB and its learner toolboxes are unavailable in the review environment. The MATLAB regression suites and full training runs have **not been executed** here. Run `runtests('tests')` and `assertSuccess(results)` in MATLAB before using the corrected experiments.
 
 [Profile and project directory](https://github.com/zohaibjan)

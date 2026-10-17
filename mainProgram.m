@@ -35,13 +35,13 @@ for i=1:length(Problem)
             allMVote = results.allMVote;  
             results.eachClass = j;
             results.majVote = majVote;
-            results.mstd_dev = 0;
+            results.mstd_dev = NaN; % Not measured by this per-repeat driver.
             results.clusterBased = clusterBased;
-            results.cstd_dev = 0;
+            results.cstd_dev = NaN; % Not measured by this per-repeat driver.
             results.e_mVote = e_mVote;
-            results.e_mVote_dev = 0;
+            results.e_mVote_dev = NaN; % Not measured by this per-repeat driver.
             results.allMVote = allMVote;
-            results.allMVote_dev = 0;
+            results.allMVote_dev = NaN; % Not measured by this per-repeat driver.
             results.runs = runs;
             saveResults(results, p_name);
             disp(fprintf('%s:******\nMajvote :  %f \nFusion :  %f\n\n',p_name, results.majVote, results.clusterBased));

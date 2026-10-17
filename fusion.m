@@ -1,31 +1,28 @@
-function acc=fusion(ensemble, centroids, test)
-decisionMatrix = zeros(size(test,1),1);
-
-for i=1:size(test,1)
-    distances = zeros(1, length(centroids));
-    for j =1:length(centroids)
-        distances(j) = norm(double(test(i,1:end-1) - centroids{1,j}));
-    end
-    index = find(distances == min(distances));
-    if length(index) > 1
-        preds = zeros(1, length(index));
-        for k=1:length(index)
-            if strcmp(ensemble{1,index(k)}.name, 'ANN') == 1
-                preds(1,k) = getNNPredict(ensemble{1,index(k)}.model, test(i,1:end-1));
-            else
-                preds(1,k) = predict(ensemble{1,index(k)}.model, test(i,1:end-1));
-            end
-            
-        end
-        decisionMatrix(i,:) = mode(preds,2);
-    elseif length(index) == 1
-        if strcmp(ensemble{1,index}.name, 'ANN') == 1
-            decisionMatrix(i,:) = getNNPredict(ensemble{1,index}.model, test(i,1:end-1));
-        else
-            decisionMatrix(i,:) = predict(ensemble{1,index}.model, test(i,1:end-1));
-        end
-    end
+function acc = fusion(ensemble, centroids, test)
+%FUSION Route each sample using feature-only centroids in raw feature space.
+if isempty(ensemble) || numel(ensemble) ~= numel(centroids)
+    error('Research:CentroidAlignment', 'Supply one centroid for each trained model.');
 end
-acc = mean(decisionMatrix == test(:,end));
-
+X = test(:, 1:end-1);
+truth = numericLabels(test(:, end));
+centers = zeros(numel(centroids), size(X, 2));
+for j = 1:numel(centroids)
+    if numel(centroids{j}) ~= size(X, 2) || any(~isfinite(centroids{j}(:)))
+        error('Research:CentroidDimension', 'Centroids must match the feature dimensions.');
+    end
+    centers(j, :) = centroids{j};
+end
+labels = zeros(size(X, 1), 1);
+for i = 1:size(X, 1)
+    offsets = bsxfun(@minus, centers, X(i, :));
+    distances = sum(offsets .^ 2, 2);
+    nearest = find(distances == min(distances));
+    votes = zeros(1, numel(nearest));
+    for k = 1:numel(nearest)
+        j = nearest(k);
+        votes(k) = predictLabels(ensemble{j}, X(i, :));
+    end
+    labels(i) = votePredictions(votes);
+end
+acc = mean(labels == truth);
 end

@@ -17,6 +17,7 @@ cvFolds = cvpartition(data(:,end), 'KFold', numOfFolds);
 %% ITERATE OVER THE NUMBER OF FOLDS
 parfor f=1:numOfFolds
     classifiers= {};
+    classifierCentroids = {};
     classifierIndex = 1;
     allClassifiers= {};
     allClassifierIndex = 1;
@@ -60,15 +61,17 @@ parfor f=1:numOfFolds
     end
     
     
-    for c=balancedClusters
-        X = c{1,1}(:, 1:end-1);
-        y = c{1,1}(:, end);
+    for clusterIndex = 1:numel(balancedClusters)
+        c = balancedClusters{clusterIndex};
+        X = c(:, 1:end-1);
+        y = c(:, end);
         all = trainClassifiers(X, y, valX, valy, params);
         if size(all,1) < 1
             continue
         end
         for temp = 1:length(all)
             classifiers{classifierIndex} = all{1,temp};
+            classifierCentroids{classifierIndex} = centroids{clusterIndex};
             classifierIndex = classifierIndex + 1;
         end
     end
@@ -77,7 +80,7 @@ parfor f=1:numOfFolds
     ensemble = ensembleSelection(classifiers, valX, valy);
     mVote(f) = majVote(classifiers, testX, testy);
     e_mVote(f) = majVote(ensemble, testX, testy);
-    clusterBased(f) = fusion(classifiers, centroids, [testX, testy]);
+    clusterBased(f) = fusion(classifiers, classifierCentroids, [testX, testy]);
 %     clusterBased(f) = 0;
     allMVote(f) = majVote(allClassifiers, testX, testy);
     

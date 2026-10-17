@@ -21,7 +21,7 @@ parfor f=1:numOfFolds
     allClassifierIndex = 1;
     
     idx = cvFolds.test(f);
-    trainData = zscore(data(~idx,:));
+    trainData = data(~idx,:); % trainSVM standardizes predictors using training data.
     testData = data(idx,:);
     cv = cvpartition(trainData(:,end), 'holdout', 0.01);
     idxs = cv.test;

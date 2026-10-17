@@ -13,7 +13,7 @@ function genClusters = generateClusters(Xtrain, Ytrain , params)
     k = 1;
     while mean(allClasses) ~= 0        
         if size(Xtrain,1) > k
-            [clusterIds, C, sum, D] = kmeans(zscore(Xtrain), k, 'MaxIter', 2400);  
+            [clusterIds, C, sum, D] = kmeans(dataNormalize(Xtrain, 2), k, 'MaxIter', 2400);  
             if k == 1
                 genClusters{totalClusters}.train = data(clusterIds == k,:); % indexes of clusters
                 genClusters{totalClusters}.centroid = C(k,:); % indexes of clusters

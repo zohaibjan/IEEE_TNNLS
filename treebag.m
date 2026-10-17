@@ -1,12 +1,12 @@
 Problem={'adult','australian','balance','banknote',...
-    'breast-cancer-wisconsin','ecoli','haberman','ionosphere','iris'....
+    'breast-cancer-wisconsin','ecoli','haberman','ionosphere','iris', ...
     'liver','page-blocks','pima_diabetec','segment','sonar','statimag',...
     'teaching','thyroid','vehicle','vowel','wdbc','wine','DNA',...
     'fertility','heart','letter-recognition','hepatitis','bupa',...
     'transfusion','zoo','hayes-roth'};
 
 % Problem={'letter-recognition'};
-parfor i=1:length(Problem)
+for i=1:length(Problem)
     accuracy = []
     for runs = 1:10
 
@@ -33,9 +33,7 @@ parfor i=1:length(Problem)
             classifier = TreeBagger(50, trainX, trainY);
             preds = predict(classifier, testX);
             
-            for n=1:length(preds)
-                predictY(n,1)=str2num(cell2mat(preds(n)));
-            end
+            predictY = numericLabels(preds);
             eval = mean(testY==predictY);
             avgAccuracy(fold) = eval;
         end
@@ -49,7 +47,6 @@ parfor i=1:length(Problem)
     elseif (exist([pwd filesep 'results-Tree.csv'], 'file') == 2)
         fid = fopen([pwd filesep 'results-Tree.csv'], 'a');
     end
-    acc
     fprintf(fid, '%s,', p_name);
     fprintf(fid, '%s,', "Tree");
     fprintf(fid, '%f±%f\n',mean(accuracy),std(accuracy));

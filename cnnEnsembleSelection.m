@@ -1,6 +1,6 @@
 function ensemble = cnnEnsembleSelection(classifiers, X, y)
 
-y = categorical(y);
+y = numericLabels(y);
 
 accuracies = zeros(1, length(classifiers));
 for i=1:length(classifiers)

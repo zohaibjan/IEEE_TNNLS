@@ -26,5 +26,6 @@ function network = trainNN(X, y, params , p)
 
     % Train the Network
     [net,tr] = train(net,x,t);
+    net.userdata.classLabels = unique(y(:));
     network = net;
 end
