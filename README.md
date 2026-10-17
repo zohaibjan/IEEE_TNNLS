@@ -40,7 +40,11 @@ The seed is a starting point for recording runs; nested seed resets, parallel wo
 
 ## Review notes and reproducibility limits
 
-The active path stores raw feature-space centroids and associates one centroid with each successfully trained learner, including multiple learners per cluster. Constant feature columns do not create NaNs during clustering. ANN/CNN outputs preserve their numeric training labels; an all-tied valid selection retains a nonempty pool. The main driver writes one row per repeat; unmeasured deviation columns contain NaN, not a claim of zero uncertainty. The alternate driver aggregates repeats. The separate `runTraining_SVM.m` variant no longer z-scores labels or pre-scales only the training fold: SVM models handle predictor standardization internally. That variant still needs runtime verification.
+The active path stores raw feature-space centroids and associates one centroid with each successfully trained learner, including multiple learners per cluster. Constant feature columns do not create NaNs during clustering. ANN/CNN outputs preserve their numeric training labels; an all-tied valid selection retains a nonempty pool. The main driver writes one row per repeat; unmeasured deviation columns contain NaN, not a claim of zero uncertainty. The alternate driver aggregates repeats. The separate `runTraining_SVM.m` variant no longer z-scores labels or pre-scales only the training fold: SVM models handle predictor standardization internally. Both fold drivers now have a synthetic MATLAB smoke test.
+
+## Runtime follow-up — October 2026
+
+Nested loop indexing is compatible with parfor. Both fold-driver smoke tests set params.maxWorkers=0 to execute the parfor body locally; multi-worker scaling, timing and reproducibility remain untested. Default maxWorkers remains Inf. Validation splitting preserves both training and validation rows per class; singleton classes fail explicitly. The SVM variant is covered by this smoke test.
 
 ## Correctness review — October 2026
 
@@ -53,6 +57,6 @@ This pass fixes implementation defects; it does not validate the associated rese
 
 See [the code review](docs/code-review.md) for repository-specific changes, tests and remaining limitations.
 
-**Validation:** all MATLAB sources were statically parsed/linted with MISS_HIT. MATLAB and its learner toolboxes are unavailable in the review environment. The MATLAB regression suites and full training runs have **not been executed** here. Run `runtests('tests')` and `assertSuccess(results)` in MATLAB before using the corrected experiments.
+**Validation:** 22 regression/smoke tests passed in MATLAB R2024b on Linux through [GitHub Actions](https://github.com/zohaibjan/IEEE_TNNLS/actions/workflows/matlab-tests.yml). Tests include real toolbox execution on synthetic data. Full research datasets and published accuracy results have not been reproduced. See [validation evidence and limits](docs/validation.md).
 
 [Profile and project directory](https://github.com/zohaibjan)
