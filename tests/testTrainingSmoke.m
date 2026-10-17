@@ -20,3 +20,14 @@ for k = 1:numel(drivers)
     verifyTrue(testCase,all(isfinite(values) & values>=0 & values<=1));
 end
 end
+function testTinyHoldoutPreservesBothSides(testCase)
+y = [0;0;10;10];
+selected = validationHoldout(y,0.01);
+verifyEqual(testCase,sort(y(selected)),[0;10]);
+verifyEqual(testCase,sort(y(~selected)),[0;10]);
+large = [zeros(1000,1);10*ones(1000,1)];
+verifyEqual(testCase,sum(validationHoldout(large,0.01)),20);
+end
+function testSingletonClassRejectsSplit(testCase)
+verifyError(testCase,@() validationHoldout([0;10;10],0.1),'Research:InsufficientClassSamples');
+end

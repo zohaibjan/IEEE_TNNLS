@@ -28,8 +28,7 @@ parfor (f=1:numOfFolds, maxWorkers)
     idx = cvFolds.test(f);
     trainData = data(~idx,:); % trainSVM standardizes predictors using training data.
     testData = data(idx,:);
-    cv = cvpartition(trainData(:,end), 'holdout', 0.01);
-    idxs = cv.test;
+    idxs = validationHoldout(trainData(:,end),0.01);
     validationData = trainData(idxs,:);
     trainData = trainData(~idxs, :);
     

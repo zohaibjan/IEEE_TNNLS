@@ -30,8 +30,7 @@ parfor (f=1:numOfFolds, maxWorkers)
     idx = cvFolds.test(f);
     trainData = data(~idx,:);
     testData = data(idx,:);
-    cv = cvpartition(trainData(:,end), 'holdout', 0.1);
-    idxs = cv.test;
+    idxs = validationHoldout(trainData(:,end),0.1);
     validationData = trainData(idxs,:);
     trainData = trainData(~idxs, :);
     
